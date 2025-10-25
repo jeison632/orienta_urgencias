@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "708313157635",
+    "project_id": "orienta-urgencia",
+    "storage_bucket": "orienta-urgencia.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708313157635:android:1f563135eb95f70605fe36",
+        "android_client_info": {
+          "package_name": "com.example.orientaurgencias"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkaw5P6TcR_t8f4JEIoFspY1pOiotBJPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,31 @@
+name: orienta_urgencias
+description: "Aplicación móvil para orientar el uso adecuado de los servicios de urgencias."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.0
+  geolocator: ^10.1.0
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  firebase_core: ^3.4.0
+  firebase_auth: ^5.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/imagen_inicio.png
