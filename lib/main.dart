@@ -1,19 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
-// Importamos tus páginas
+// Importamos las páginas principales
 import 'presentacion/paginas/login_page.dart';
 import 'presentacion/paginas/pagina_inicio.dart';
 import 'presentacion/paginas/pagina_educativa.dart';
 import 'presentacion/paginas/pagina_mapa.dart';
 import 'presentacion/paginas/pagina_orientacion.dart';
+import 'presentacion/paginas/pagina_configuracion.dart'; // ✅ Panel de configuración
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+
+  // 🔹 Leemos la preferencia del modo oscuro guardado
+  final prefs = await SharedPreferences.getInstance();
+  final savedDarkMode = prefs.getBool('isDarkMode') ?? false;
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(savedDarkMode),
+      child: const MyApp(),
+    ),
+  );
+}
+
+/// 🌙 Provider para controlar el modo oscuro
+class ThemeNotifier extends ChangeNotifier {
+  bool _isDarkMode;
+  ThemeNotifier(this._isDarkMode);
+
+  bool get isDarkMode => _isDarkMode;
+  ThemeMode get themeMode => _isDarkMode ? ThemeMode.dark : ThemeMode.light;
+
+  Future<void> toggleDarkMode() async {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', _isDarkMode);
+  }
+
+  Future<void> setDarkMode(bool value) async {
+    _isDarkMode = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', _isDarkMode);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -21,16 +57,28 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return MaterialApp(
       title: 'Orienta Urgencias',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.red, useMaterial3: true),
+      themeMode: themeNotifier.themeMode, // 🌙 Control dinámico del tema
+      theme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.red,
+        brightness: Brightness.light,
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorSchemeSeed: Colors.red,
+        brightness: Brightness.dark,
+      ),
       home: const AuthGate(),
     );
   }
 }
 
-/// Decide si mostrar Login o HomePage
+/// 🔐 Controla si se muestra el login o la app principal
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -46,16 +94,16 @@ class AuthGate extends StatelessWidget {
         }
 
         if (snapshot.hasData) {
-          return const HomePage(); // Usuario logueado -> HomePage
+          return const HomePage(); // ✅ Usuario logueado
         }
 
-        return const LoginPage(); // Usuario no logueado -> LoginPage
+        return const LoginPage(); // ❌ Usuario no logueado
       },
     );
   }
 }
 
-/// HomePage con barra inferior de navegación
+/// 🏠 Pantalla principal con barra inferior de navegación
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -66,12 +114,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _paginaSeleccionada = 0;
 
-  // Lista de páginas
+  // 🔹 Lista de páginas disponibles en la app
   final List<Widget> _paginas = const [
     PaginaInicio(),
     PaginaEducativa(),
     PaginaMapa(),
     PaginaOrientacion(),
+    PaginaConfiguracion(), // ✅ Panel de configuración
   ];
 
   @override
@@ -82,6 +131,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _paginaSeleccionada,
         selectedItemColor: Colors.redAccent,
         unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _paginaSeleccionada = index;
@@ -94,6 +144,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.local_hospital),
             label: 'Orientación',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Configuración',
           ),
         ],
       ),

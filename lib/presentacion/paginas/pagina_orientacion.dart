@@ -128,10 +128,14 @@ class _PaginaOrientacionState extends State<PaginaOrientacion> {
 
   @override
   Widget build(BuildContext context) {
+    final esOscuro = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Orientación Médica'),
-        backgroundColor: Colors.teal,
+        backgroundColor:
+            esOscuro ? const Color.fromARGB(255, 46, 64, 83) : Colors.teal,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -150,7 +154,12 @@ class _PaginaOrientacionState extends State<PaginaOrientacion> {
                   categorias.map((String categoria) {
                     return DropdownMenuItem<String>(
                       value: categoria,
-                      child: Text(categoria),
+                      child: Text(
+                        categoria,
+                        style: TextStyle(
+                          color: esOscuro ? Colors.white : Colors.black,
+                        ),
+                      ),
                     );
                   }).toList(),
               onChanged: (String? valor) {
@@ -169,22 +178,30 @@ class _PaginaOrientacionState extends State<PaginaOrientacion> {
               Expanded(
                 child: ListView(
                   children: [
-                    const Text(
+                    Text(
                       'Selecciona los síntomas que presentas:',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
+                        color: esOscuro ? Colors.white : Colors.black87,
                       ),
                     ),
                     ...sintomasSeleccionados.keys.map((sintoma) {
                       return CheckboxListTile(
-                        title: Text(sintoma),
+                        title: Text(
+                          sintoma,
+                          style: TextStyle(
+                            color: esOscuro ? Colors.white : Colors.black87,
+                          ),
+                        ),
                         value: sintomasSeleccionados[sintoma],
                         onChanged: (bool? valor) {
                           setState(() {
                             sintomasSeleccionados[sintoma] = valor ?? false;
                           });
                         },
+                        activeColor:
+                            esOscuro ? const Color(0xFF0A74DA) : Colors.teal,
                       );
                     }).toList(),
                   ],
@@ -197,7 +214,8 @@ class _PaginaOrientacionState extends State<PaginaOrientacion> {
                 icon: const Icon(Icons.health_and_safety),
                 label: const Text('Obtener orientación'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.teal,
+                  backgroundColor:
+                      esOscuro ? const Color(0xFF0A74DA) : Colors.teal,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -209,25 +227,34 @@ class _PaginaOrientacionState extends State<PaginaOrientacion> {
                 padding: const EdgeInsets.all(14),
                 margin: const EdgeInsets.only(top: 8),
                 decoration: BoxDecoration(
-                  color: Colors.teal.shade50,
+                  color:
+                      esOscuro
+                          ? const Color.fromARGB(255, 60, 79, 102)
+                          : Colors.teal.shade50,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.teal),
+                  border: Border.all(
+                    color: esOscuro ? const Color(0xFF0A74DA) : Colors.teal,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       nivelAlerta,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.teal,
+                        color: esOscuro ? const Color(0xFF0A74DA) : Colors.teal,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       orientacion,
-                      style: const TextStyle(fontSize: 16, height: 1.4),
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.4,
+                        color: esOscuro ? Colors.white : Colors.black87,
+                      ),
                     ),
                   ],
                 ),
